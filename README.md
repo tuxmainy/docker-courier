@@ -1,4 +1,4 @@
 # docker-courier
 Courier MTA Docker image
 
-Courier MTA Docker image: TBD
+Currently in an odd not nice usable state. Please be patient :)
