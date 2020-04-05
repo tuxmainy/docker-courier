@@ -11,4 +11,5 @@ Docker image providing full [Courier MTA](http://www.courier-mta.org/) suite (no
 # add users
 1. `echo -n 'mypassword' |openssl sha256 -binary |base64`
 2. add new user to userdb:
+
 `user@example.org        systempw={SHA256}<your generated hash goes here>|home=/mail/user|uid=101|gid=101|mail=/mail/user/maildir`
