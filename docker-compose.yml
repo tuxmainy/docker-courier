@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+        server:
+                build:
+                        context: .
+                network_mode: bridge
+                ports:
+                        - 25:25
+                        - 143:143
+                        - 993:993
+                volumes:
+                        - conf:/etc/courier
+                        - mail:/mail
+                        - /dev/log:/dev/log
+                hostname: mail.example.org
+                restart: always
+volumes:
+        conf:
+                driver_opts:
+                        type: "none"
+                        o: "bind"
+                        device: "${DATA_BASE}/conf"
+        mail:
+                driver_opts:
+                        type: "none"
+                        o: "bind"
+                        device: "${DATA_BASE}/mail"
+
