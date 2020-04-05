@@ -1,2 +1,4 @@
 # docker-courier
-Courier MTA Docker Image
+Courier MTA Docker image
+
+Courier MTA Docker image: TBD
