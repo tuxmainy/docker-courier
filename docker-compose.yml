@@ -6,14 +6,17 @@ services:
                         context: .
                 network_mode: bridge
                 ports:
-                        - 25:25
-                        - 143:143
-                        - 993:993
+                        - "138.201.55.55:25:25"
+                        - "138.201.55.55:143:143"
+                        - "138.201.55.55:993:993"
+                        - "2a01:4f8:172:101f::2:25:25"
+                        - "2a01:4f8:172:101f::2:143:143"
+                        - "2a01:4f8:172:101f::2:993:993"
                 volumes:
                         - conf:/etc/courier
                         - mail:/mail
                         - /dev/log:/dev/log
-                hostname: mail.example.org
+                hostname: devloop.de
                 restart: always
 volumes:
         conf:

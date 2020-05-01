@@ -1,3 +1,5 @@
+#!/bin/bash
+
 test -e /etc/courier/esmtpd || cp -a /etc/courier.docker/* /etc/courier
 
 /usr/sbin/makeacceptmailfor
@@ -14,18 +16,22 @@ test -e /etc/courier/esmtpd || cp -a /etc/courier.docker/* /etc/courier
 
 sleep 1
 for home in `/usr/sbin/authenumerate |awk '{print $4}'`; do
-	if [ ! -d "$home" ]; then
+	if [[ ! -e "$home" ]]; then
 		mkdir -p "$home"
 		/usr/bin/maildirmake "$home/maildir"
-		chown -R 101 "$home"
 	fi
 done
 
+chown -R 8:12 /mail
+chown -R 8:12 /etc/courier
+
 /usr/sbin/esmtpd start
-/usr/sbin/imapd start
-/usr/sbin/imapd-ssl start
+/usr/sbin/courier-imapd start
+/usr/sbin/courier-imapd-ssl start
 /usr/sbin/courier start
 
+#umask 0111
 while true; do
+	#nc -lU /dev/log |sed 's/</\n</g' >&2
 	sleep 10
 done

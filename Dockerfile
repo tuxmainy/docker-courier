@@ -1,25 +1,24 @@
-FROM debian
+FROM gentoo/portage:latest as portage
 
-ENV DEBIAN_FRONTEND noninterative
+FROM gentoo/stage3-amd64:latest
 
-RUN apt-get update && \
-	apt-get install -y courier-imap courier-mta courier-authlib-userdb netcat-openbsd maildrop gamin && \
-	rm -rf /var/lib/apt/lists/*
+COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
-RUN ln -s /bin/mkdir /usr/bin/mkdir && \
-	ln -s /bin/cat /usr/bin/cat
+RUN emerge mail-mta/courier && \
+	rm -rf /var/db/repos/gentoo
 
 RUN sed -i 's;^TCPDOPTS=.\+$;TCPDOPTS="-stderrlogger=/usr/sbin/courierlogger -nodnslookup -noidentlookup";' /etc/courier/esmtpd
 RUN sed -i 's;^TCPDOPTS=.\+$;TCPDOPTS="-stderrlogger=/usr/sbin/courierlogger -nodnslookup -noidentlookup";' /etc/courier/imapd
-RUN sed -i 's;^authmodulelist=.\+$;authmodulelist="authuserdb";' /etc/courier/authdaemonrc
 #RUN sed -i 's;^DEFAULTDELIVERY=.\+$;DEFAULTDELIVERY="| /usr/bin/maildrop";' /etc/courier/courierd
 RUN sed -i 's;^DEFAULTDELIVERY=.\+$;DEFAULTDELIVERY="./maildir";' /etc/courier/courierd
 RUN sed -i 's;^MAILDROPDEFAULT=.\+$;MAILDROPDEFAULT="./maildir";' /etc/courier/courierd
 
+RUN sed -i 's;^authmodulelist=.\+$;authmodulelist="authuserdb";' /etc/courier/authlib/authdaemonrc
+
 ADD start.sh /
 RUN chmod +x /start.sh
 
-ADD userdb.example /etc/courier
+ADD userdb.example /etc/courier/authlib
 
 RUN mkdir -p /run/courier/authdaemon
 
