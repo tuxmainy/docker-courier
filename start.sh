@@ -24,6 +24,7 @@ done
 
 chown -R 8:12 /mail
 chown -R 8:12 /etc/courier
+chmod go-wrx /etc/courier/maildroprc
 
 /usr/sbin/esmtpd start
 /usr/sbin/courier-imapd start
