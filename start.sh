@@ -17,15 +17,15 @@ for d in `find "${OVERRIDE_CONF}" -mindepth 1 -type d`; do
 	fi
 done
 
-for f in `find "${OVERRIDE_CONF}" -mindepth 1 -type f`; do
+for f in `find "${OVERRIDE_CONF}" -mindepth 1 -type f ! -name '*.docker'`; do
 	basefile=`echo "${f}" |sed "s;^${OVERRIDE_CONF}/;;"`
 	conffile="${CONF}/${basefile}"
 
 	if [[ ! -e "${conffile}" ]]; then
-		ln -s "${f}" "${conffile}"
+		cp -a "${f}" "${conffile}"
 	elif [[ -f "${conffile}" ]]; then
 		mv "${conffile}" "${f}.docker"
-		ln -s "${f}" "${conffile}"
+		cp -a "${f}" "${conffile}"
 	else
 		echo "${conffile} is not a file. Thus cannot override with a file."
 	fi
