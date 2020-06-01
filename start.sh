@@ -1,6 +1,36 @@
 #!/bin/bash
 
-test -e /etc/courier/esmtpd || cp -a /etc/courier.docker/* /etc/courier
+#test -e /etc/courier/esmtpd || cp -a /etc/courier.docker/* /etc/courier
+
+OVERRIDE_CONF='/conf'
+CONF='/etc/courier'
+
+for d in `find "${OVERRIDE_CONF}" -mindepth 1 -type d`; do
+	basedir=`echo "${d}" |sed "s;^${OVERRIDE_CONF}/;;"`
+	confdir="${CONF}/${basedir}"
+
+	if [[ ! -e "${confdir}" ]]; then
+		mkdir "${confdir}"
+	elif [[ ! -d "${confdir}" ]]; then
+		echo "${confdir} is not a directory. Thus cannot override with a directory."
+		exit 1
+	fi
+done
+
+for f in `find "${OVERRIDE_CONF}" -mindepth 1 -type f`; do
+	basefile=`echo "${f}" |sed "s;^${OVERRIDE_CONF}/;;"`
+	conffile="${CONF}/${basefile}"
+
+	if [[ ! -e "${conffile}" ]]; then
+		ln -s "${f}" "${conffile}"
+	elif [[ -f "${conffile}" ]]; then
+		mv "${conffile}" "${f}.docker"
+		ln -s "${f}" "${conffile}"
+	else
+		echo "${conffile} is not a file. Thus cannot override with a file."
+	fi
+done
+
 
 /usr/sbin/makeacceptmailfor
 /usr/sbin/makealiases
